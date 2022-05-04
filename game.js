@@ -9,9 +9,12 @@ var autoInc = 0;
 var points = 0;
 var today = new Date();
 var lastTime = Date.now();
+var chinesePunch = 20000;
+var timer = new Date();
+
 
 /**images = ['ball']
-image = [];
+ image = [];
 
 function onload(){
     for(i = 0; i < images.length; i++){
@@ -41,15 +44,14 @@ var wRectangle = 250;
 var hRectangle = 500;
 var hitBox = new Rectangle(W/2 - wRectangle/2, H/2 - hRectangle/2, wRectangle, hRectangle);
 
-var wButton = 200;
-var hButton = 70;
-
 //var buttons = new Array(3);
 
 //for (let i; i > buttons.length; i++) {
 //    buttons.push(new Rectangle(W - wButton, i * 70, wButton, hButton));
 //}
 
+var wButton = 200;
+var hButton = 70;
 var Button1 = new Rectangle(W-wButton, 0, wButton, hButton);
 var Button2 = new Rectangle(W-wButton, 70, wButton, hButton);
 var Button3 = new Rectangle(W-wButton, 140, wButton, hButton);
@@ -57,23 +59,58 @@ var Button3 = new Rectangle(W-wButton, 140, wButton, hButton);
 function overlaps(mouseX, mouseY, Rectangle){
     return mouseX > Rectangle.x && mouseX < Rectangle.x + Rectangle.width && mouseY > Rectangle.y && mouseY < Rectangle.y + Rectangle.height;
 }
+
+function kungFuEvent(){
+    //camminata cinese
+    points += chinesePunch;
+    //suono pugno
+}
+
+var costs = [100, 1000, 10000];
+
 function mouseClicked(){
-    if(overlaps(mouseX, mouseY, hitBox)){//collisione con rettangolo 
+    if(overlaps(mouseX, mouseY, hitBox)){//click sul rettangolo 
         points += clickInc;
-        fill('black');
-        text(points, 10, 30);
-    }else if(overlaps(mouseX, mouseY, Button1)){
-        if(points >= 10){
-            points -= 10;
-            autoInc += 1;
+        for(let i = 0; i < 100; i++){
+            if(Date.now() - timer > 200){
+                hitBox.x += 4; 
+                hitBox.y += 4;
+                hitBox.width -= 4;  
+                hitBox.height -= 4;
+                hitBox.draw('red');
+                timer = Date.now();
+                console.log("sono entrato");
+            }
         }
-    }else if(overlaps(mouseX, mouseY, Button2)){
-        if(points >= 100){
-            points -= 100;
+        for(let i = 0; i < 100; i++){
+            if(Date.now() - timer > 200){
+                hitBox.x -= 4; 
+                hitBox.y -= 4;
+                hitBox.width += 4;  
+                hitBox.height += 4;
+                hitBox.draw('red');
+                timer = Date.now();
+            } 
+        }
+    }else if(overlaps(mouseX, mouseY, Button1)){//bottone 1
+        if(points >= costs[0]){
+            points -= costs[0];
+            costs[0] *= 2;
             clickInc *= 2;
-        }        
-    }else if(overlaps(mouseX, mouseY, Button3)){
-        //fa qualcosa
+        }  
+    }else if(overlaps(mouseX, mouseY, Button2)){//bottone 2
+        if(points >= costs[1]){
+            points -= costs[1];
+            costs[1] *= 2;
+            autoInc *= 3;
+        }      
+    }else if(overlaps(mouseX, mouseY, Button3)){//bottone 3
+        if(points >= costs[2]){
+            points -= costs[2];
+            costs[2] *= 2;
+            kungFuEvent()
+            chinesePunch *= 2;
+        } 
     }
 }
 
@@ -85,6 +122,7 @@ function addPunches(){
 }
 
 function draw(){
+    //
     background(250,218,221);
     Button1.draw('brown');//upgrade 1
     Button2.draw('brown');
