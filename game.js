@@ -5,10 +5,10 @@
  */
 const W = 1600, H = 900;
 var clickInc = 1;
-var autoInc = 1;
-var countPunches = 0;
+var autoInc = 0;
+var points = 0;
 var today = new Date();
-var beginSeconds = today.getSeconds() + 1;
+var lastTime = Date.now();
 
 /**images = ['ball']
 image = [];
@@ -43,6 +43,13 @@ var hitBox = new Rectangle(W/2 - wRectangle/2, H/2 - hRectangle/2, wRectangle, h
 
 var wButton = 200;
 var hButton = 70;
+
+//var buttons = new Array(3);
+
+//for (let i; i > buttons.length; i++) {
+//    buttons.push(new Rectangle(W - wButton, i * 70, wButton, hButton));
+//}
+
 var Button1 = new Rectangle(W-wButton, 0, wButton, hButton);
 var Button2 = new Rectangle(W-wButton, 70, wButton, hButton);
 var Button3 = new Rectangle(W-wButton, 140, wButton, hButton);
@@ -52,26 +59,28 @@ function overlaps(mouseX, mouseY, Rectangle){
 }
 function mouseClicked(){
     if(overlaps(mouseX, mouseY, hitBox)){//collisione con rettangolo 
-        countPunches += clickInc;
+        points += clickInc;
         fill('black');
-        text(countPunches, 10, 30);
+        text(points, 10, 30);
     }else if(overlaps(mouseX, mouseY, Button1)){
-        if(countPunches >= 100){
-            countPunches -= 100;
-            clickInc *= 2;
+        if(points >= 10){
+            points -= 10;
+            autoInc += 1;
         }
     }else if(overlaps(mouseX, mouseY, Button2)){
-        //fa qualcosa
+        if(points >= 100){
+            points -= 100;
+            clickInc *= 2;
+        }        
     }else if(overlaps(mouseX, mouseY, Button3)){
         //fa qualcosa
     }
 }
 
 function addPunches(){
-    var seconds = today.getSeconds();
-    if(seconds - beginSeconds == 0){
-        countPunches += autoInc;
-        beginSeconds += 1;
+    if(Date.now() - lastTime > 1000){
+        points += autoInc;
+        lastTime = Date.now();
     }
 }
 
@@ -82,6 +91,7 @@ function draw(){
     Button3.draw('brown');
     hitBox.draw('red');
     fill('black');
-    text(countPunches, 10, 30);
+    textSize(50);
+    text(points, 10, 50);
     addPunches();
 }
